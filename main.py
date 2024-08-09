@@ -9,20 +9,16 @@ df_large = pd.read_csv('RSSISensors_Large.csv')
 df_medium = pd.read_csv('RSSISensors_Medium.csv')
 df_small = pd.read_csv('RSSISensors_Small.csv')
 
-# Combine the datasets for a more comprehensive model
 df_combined = pd.concat([df_large, df_medium, df_small])
 
-# Drop the index column (Unnamed: 0) if present
 df_combined = df_combined.loc[:, ~df_combined.columns.str.contains('^Unnamed')]
 
-# Remove leading spaces from the column names
 df_combined.columns = df_combined.columns.str.strip()
 
 # Normalize the RSSI values and position coordinates
 scaler = MinMaxScaler()
 df_normalized = pd.DataFrame(scaler.fit_transform(df_combined), columns=df_combined.columns)
 
-# Separate features (RSSI values) and labels (coordinates)
 X = df_normalized[['r1', 'r2', 'r3', 'r4']].values
 y = df_normalized[['x', 'y']].values
 
@@ -59,13 +55,11 @@ generator.summary()
 discriminator.summary()
 
 
-# Function to generate random noise as input for the generator
 def generate_latent_points(latent_dim, n_samples):
     x_input = np.random.randn(latent_dim * n_samples)
     x_input = x_input.reshape(n_samples, latent_dim)
     return x_input
 
-# Function to generate and plot synthetic data
 def generate_fake_samples(generator, latent_dim, n_samples):
     x_input = generate_latent_points(latent_dim, n_samples)
     X = generator.predict(x_input)
@@ -77,7 +71,6 @@ import matplotlib.pyplot as plt
 def train_gan(generator, discriminator, gan, X, latent_dim, n_epochs=10000, n_batch=64):
     half_batch = int(n_batch / 2)
     
-    # Lists to hold the loss values
     d_losses = []
     g_losses = []
     
@@ -91,18 +84,14 @@ def train_gan(generator, discriminator, gan, X, latent_dim, n_epochs=10000, n_ba
         X_fake, y_fake = generate_fake_samples(generator, latent_dim, half_batch)
         d_loss_fake = discriminator.train_on_batch(X_fake, y_fake)
         
-        # Prepare points in latent space as input for the generator
         X_gan = generate_latent_points(latent_dim, n_batch)
         y_gan = np.ones((n_batch, 1))
         
-        # Train the generator via the discriminator's error
         g_loss = gan.train_on_batch(X_gan, y_gan)
         
-        # Record losses
         d_losses.append(d_loss_real + d_loss_fake)
         g_losses.append(g_loss)
         
-        # Print losses every 1000 epochs
         if i % 1000 == 0:
             print(f"{i} [D loss: {d_loss_real + d_loss_fake}] [G loss: {g_loss}]")
     
