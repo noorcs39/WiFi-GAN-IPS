@@ -1,4 +1,6 @@
-# Indoor Positioning System using GAN or Indoor Positioning System for finding the location and predicting missing Fingerprints
+# Indoor Positioning System using GAN
+# or
+# Indoor Positioning System for finding the location and predicting missing Fingerprints
 
 This project is titled **Indoor Positioning System using GAN** and was developed by **Nooruddin Noonari** as part of the Master's in Software Engineering program at **Tianjin University, Tianjin, China**.
 
